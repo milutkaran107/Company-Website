@@ -1,0 +1,799 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DevShift Solutions — Empowering Developers</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #08090c;
+    --surface: #0f1117;
+    --border: #1e2130;
+    --accent: #00e5ff;
+    --accent2: #7b61ff;
+    --text: #e8eaf0;
+    --muted: #6b7280;
+    --white: #ffffff;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'DM Mono', monospace;
+    overflow-x: hidden;
+  }
+
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 9999;
+    opacity: 0.4;
+  }
+
+  /* ── NAV ── */
+  nav {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1.25rem 4rem;
+    border-bottom: 1px solid var(--border);
+    background: rgba(8,9,12,0.9);
+    backdrop-filter: blur(16px);
+  }
+
+  .logo {
+    font-family: 'Syne', sans-serif;
+    font-weight: 800;
+    font-size: 1.2rem;
+    letter-spacing: -0.02em;
+    color: var(--white);
+    text-decoration: none;
+    cursor: pointer;
+  }
+  .logo span { color: var(--accent); }
+
+  .nav-links {
+    display: flex;
+    gap: 0;
+    list-style: none;
+    align-items: center;
+  }
+
+  .nav-links li a {
+    display: block;
+    padding: 0.5rem 1.1rem;
+    color: var(--muted);
+    text-decoration: none;
+    font-size: 0.72rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    transition: color 0.2s;
+    cursor: pointer;
+  }
+
+  .nav-links li a:hover { color: var(--white); }
+
+  .nav-links li a.nav-cta {
+    margin-left: 0.75rem;
+    padding: 0.5rem 1.25rem;
+    border: 1px solid var(--accent);
+    color: var(--accent);
+    border-radius: 2px;
+    transition: all 0.2s;
+  }
+  .nav-links li a.nav-cta:hover {
+    background: var(--accent);
+    color: var(--bg);
+  }
+
+  /* Mobile hamburger */
+  .hamburger {
+    display: none;
+    flex-direction: column;
+    gap: 5px;
+    cursor: pointer;
+    padding: 4px;
+    background: none;
+    border: none;
+  }
+  .hamburger span {
+    display: block;
+    width: 22px;
+    height: 2px;
+    background: var(--text);
+    transition: all 0.3s;
+  }
+  .hamburger.open span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+  .hamburger.open span:nth-child(2) { opacity: 0; }
+  .hamburger.open span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+
+  .mobile-menu {
+    display: none;
+    position: fixed;
+    top: 61px; left: 0; right: 0;
+    background: rgba(8,9,12,0.98);
+    border-bottom: 1px solid var(--border);
+    padding: 1.5rem 2rem;
+    z-index: 999;
+    flex-direction: column;
+    gap: 0.25rem;
+  }
+  .mobile-menu.open { display: flex; }
+  .mobile-menu a {
+    padding: 0.75rem 0;
+    color: var(--muted);
+    text-decoration: none;
+    font-size: 0.8rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    border-bottom: 1px solid var(--border);
+    transition: color 0.2s;
+  }
+  .mobile-menu a:hover { color: var(--accent); }
+  .mobile-menu a:last-child { border-bottom: none; color: var(--accent); }
+
+  /* ── HERO ── */
+  #home {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    padding: 8rem 4rem 4rem;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .hero-grid-bg {
+    position: absolute;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(0,229,255,0.04) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(0,229,255,0.04) 1px, transparent 1px);
+    background-size: 60px 60px;
+    mask-image: radial-gradient(ellipse 80% 80% at 50% 50%, black 30%, transparent 100%);
+  }
+
+  .hero-glow {
+    position: absolute;
+    width: 600px; height: 600px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(0,229,255,0.07) 0%, transparent 70%);
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    pointer-events: none;
+  }
+  .hero-glow2 {
+    position: absolute;
+    width: 400px; height: 400px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(123,97,255,0.09) 0%, transparent 70%);
+    top: 25%; right: 8%;
+    pointer-events: none;
+  }
+
+  .hero-content { position: relative; max-width: 900px; }
+
+  .hero-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.35rem 0.85rem;
+    border: 1px solid var(--border);
+    border-radius: 2px;
+    font-size: 0.7rem;
+    color: var(--muted);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    margin-bottom: 2rem;
+    animation: fadeUp 0.6s ease both;
+  }
+  .hero-badge::before {
+    content: '';
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: var(--accent);
+    animation: blink 2s infinite;
+  }
+
+  @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.2} }
+  @keyframes fadeUp { from{opacity:0;transform:translateY(20px)} to{opacity:1;transform:translateY(0)} }
+
+  h1 {
+    font-family: 'Syne', sans-serif;
+    font-size: clamp(3rem, 7vw, 6.5rem);
+    font-weight: 800;
+    line-height: 1.0;
+    letter-spacing: -0.04em;
+    color: var(--white);
+    margin-bottom: 1.5rem;
+    animation: fadeUp 0.6s 0.1s ease both;
+  }
+  h1 em {
+    font-style: normal;
+    color: transparent;
+    -webkit-text-stroke: 1.5px var(--accent);
+  }
+
+  .hero-sub {
+    font-size: 0.95rem;
+    line-height: 1.75;
+    color: var(--muted);
+    max-width: 520px;
+    margin-bottom: 2.5rem;
+    animation: fadeUp 0.6s 0.2s ease both;
+  }
+
+  .hero-actions {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+    animation: fadeUp 0.6s 0.3s ease both;
+  }
+
+  .btn-primary {
+    padding: 0.85rem 2rem;
+    background: var(--accent);
+    color: var(--bg);
+    text-decoration: none;
+    font-size: 0.78rem;
+    font-weight: 500;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    border-radius: 2px;
+    transition: all 0.2s;
+    font-family: 'DM Mono', monospace;
+    cursor: pointer;
+    border: none;
+  }
+  .btn-primary:hover {
+    background: #00c4db;
+    transform: translateY(-2px);
+    box-shadow: 0 8px 30px rgba(0,229,255,0.25);
+  }
+
+  .btn-secondary {
+    padding: 0.85rem 2rem;
+    border: 1px solid var(--border);
+    color: var(--text);
+    text-decoration: none;
+    font-size: 0.78rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    border-radius: 2px;
+    transition: all 0.2s;
+    font-family: 'DM Mono', monospace;
+    cursor: pointer;
+  }
+  .btn-secondary:hover { border-color: var(--muted); color: var(--white); }
+
+  /* ── STATS ── */
+  .stats-bar {
+    background: var(--surface);
+    border-top: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+    padding: 2.25rem 4rem;
+    display: flex;
+  }
+
+  .stat { flex: 1; padding: 0 2rem; border-right: 1px solid var(--border); }
+  .stat:first-child { padding-left: 0; }
+  .stat:last-child { border-right: none; }
+
+  .stat-num {
+    font-family: 'Syne', sans-serif;
+    font-size: 2.5rem;
+    font-weight: 800;
+    color: var(--white);
+    letter-spacing: -0.04em;
+    line-height: 1;
+    margin-bottom: 0.3rem;
+  }
+  .stat-num span { color: var(--accent); }
+  .stat-label { font-size: 0.68rem; color: var(--muted); letter-spacing: 0.1em; text-transform: uppercase; }
+
+  /* ── SHARED SECTION STYLES ── */
+  .section { padding: 6rem 4rem; }
+  .section-label {
+    font-size: 0.68rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 0.9rem;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+  }
+  .section-label::before { content:''; display:block; width:24px; height:1px; background:var(--accent); }
+
+  h2 {
+    font-family: 'Syne', sans-serif;
+    font-size: clamp(2rem, 4vw, 3.25rem);
+    font-weight: 800;
+    letter-spacing: -0.03em;
+    color: var(--white);
+    line-height: 1.1;
+    margin-bottom: 1rem;
+  }
+
+  /* ── SERVICES ── */
+  #services { background: var(--bg); }
+
+  .services-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1px;
+    background: var(--border);
+    border: 1px solid var(--border);
+    margin-top: 3rem;
+  }
+
+  .service-card {
+    background: var(--surface);
+    padding: 2.5rem;
+    transition: background 0.25s;
+    position: relative;
+    overflow: hidden;
+  }
+  .service-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, var(--accent), var(--accent2));
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 0.35s;
+  }
+  .service-card:hover::before { transform: scaleX(1); }
+  .service-card:hover { background: #12141e; }
+
+  .service-icon { font-size: 1.5rem; margin-bottom: 1.25rem; }
+
+  .service-card h3 {
+    font-family: 'Syne', sans-serif;
+    font-size: 1.05rem;
+    font-weight: 700;
+    color: var(--white);
+    margin-bottom: 0.75rem;
+  }
+  .service-card p { font-size: 0.8rem; line-height: 1.75; color: var(--muted); }
+
+  /* ── STACK ── */
+  #stack {
+    background: var(--surface);
+    border-top: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+    padding: 6rem 4rem;
+  }
+
+  .stack-sub { color: var(--muted); font-size: 0.83rem; margin-top: 0.75rem; max-width: 480px; line-height: 1.7; }
+
+  .stack-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    margin-top: 2.5rem;
+  }
+
+  .stack-tag {
+    padding: 0.6rem 1.35rem;
+    border: 1px solid var(--border);
+    border-radius: 2px;
+    font-size: 0.8rem;
+    color: var(--text);
+    letter-spacing: 0.05em;
+    transition: all 0.2s;
+    cursor: default;
+  }
+  .stack-tag:hover {
+    border-color: var(--accent);
+    color: var(--accent);
+    background: rgba(0,229,255,0.05);
+    transform: translateY(-2px);
+  }
+
+  /* ── HIRING ── */
+  #hiring { background: var(--bg); }
+
+  .hiring-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 5rem;
+    align-items: start;
+    margin-top: 3rem;
+  }
+
+  .hiring-text p { font-size: 0.86rem; line-height: 1.85; color: var(--muted); margin-bottom: 1.25rem; }
+
+  .region-cards { display: flex; flex-direction: column; gap: 1rem; }
+
+  .region-card {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    padding: 1.5rem;
+    border: 1px solid var(--border);
+    border-radius: 2px;
+    background: var(--surface);
+    transition: border-color 0.25s, transform 0.25s;
+  }
+  .region-card:hover { border-color: var(--accent2); transform: translateX(4px); }
+  .region-flag { font-size: 2.25rem; }
+  .region-card h4 {
+    font-family: 'Syne', sans-serif;
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--white);
+    margin-bottom: 0.3rem;
+  }
+  .region-card p { font-size: 0.76rem; color: var(--muted); line-height: 1.6; }
+
+  /* ── ABOUT ── */
+  #about {
+    background: var(--surface);
+    border-top: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+    padding: 6rem 4rem;
+  }
+
+  .about-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 5rem;
+    align-items: start;
+    margin-top: 3rem;
+  }
+
+  .about-text p { font-size: 0.86rem; line-height: 1.85; color: var(--muted); margin-bottom: 1.25rem; }
+
+  .meta-list {
+    border: 1px solid var(--border);
+    border-radius: 2px;
+    overflow: hidden;
+    margin-top: 0.5rem;
+  }
+  .meta-item {
+    display: flex;
+    justify-content: space-between;
+    padding: 0.85rem 1.25rem;
+    border-bottom: 1px solid var(--border);
+    font-size: 0.74rem;
+  }
+  .meta-item:last-child { border-bottom: none; }
+  .meta-item .key { color: var(--muted); text-transform: uppercase; letter-spacing: 0.08em; }
+  .meta-item .val { color: var(--white); }
+
+  /* ── CONTACT ── */
+  #contact {
+    background: var(--bg);
+    text-align: center;
+    padding: 7rem 4rem;
+    position: relative;
+    overflow: hidden;
+  }
+  #contact::before {
+    content: '';
+    position: absolute;
+    width: 500px; height: 500px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(0,229,255,0.06) 0%, transparent 70%);
+    top: 50%; left: 50%;
+    transform: translate(-50%,-50%);
+    pointer-events: none;
+  }
+
+  #contact .section-label { justify-content: center; }
+  #contact p { color: var(--muted); font-size: 0.85rem; line-height: 1.75; margin: 1rem 0 2.5rem; }
+
+  .contact-email {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 1rem 2.25rem;
+    border: 1px solid var(--accent);
+    color: var(--accent);
+    text-decoration: none;
+    font-size: 0.88rem;
+    letter-spacing: 0.05em;
+    border-radius: 2px;
+    transition: all 0.25s;
+    position: relative;
+  }
+  .contact-email:hover {
+    background: var(--accent);
+    color: var(--bg);
+    box-shadow: 0 0 50px rgba(0,229,255,0.2);
+  }
+
+  /* ── FOOTER ── */
+  footer {
+    padding: 2rem 4rem;
+    border-top: 1px solid var(--border);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: var(--surface);
+  }
+  footer p { font-size: 0.68rem; color: var(--muted); }
+
+  /* ── SCROLL REVEAL ── */
+  .reveal {
+    opacity: 0;
+    transform: translateY(28px);
+    transition: opacity 0.65s ease, transform 0.65s ease;
+  }
+  .reveal.visible { opacity: 1; transform: translateY(0); }
+
+  /* ── RESPONSIVE ── */
+  @media (max-width: 900px) {
+    nav { padding: 1rem 1.5rem; }
+    .nav-links { display: none; }
+    .hamburger { display: flex; }
+
+    #home, .section, #stack, #about, #contact { padding-left: 1.5rem; padding-right: 1.5rem; }
+    .stats-bar { padding: 1.5rem; flex-wrap: wrap; gap: 1.5rem; }
+    .stat { flex: 1 1 40%; border-right: none; padding: 0; }
+
+    h1 { font-size: 2.8rem; }
+    .services-grid { grid-template-columns: 1fr; }
+    .hiring-grid, .about-grid { grid-template-columns: 1fr; gap: 2.5rem; }
+    footer { flex-direction: column; gap: 0.75rem; text-align: center; padding: 1.5rem; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ── NAV ── -->
+<nav>
+  <a class="logo" href="#home">Dev<span>Shift</span> Solutions</a>
+  <ul class="nav-links">
+    <li><a href="#services">Services</a></li>
+    <li><a href="#stack">Stack</a></li>
+    <li><a href="#hiring">Hiring</a></li>
+    <li><a href="#about">About</a></li>
+    <li><a href="#contact" class="nav-cta">Contact</a></li>
+  </ul>
+  <button class="hamburger" id="hamburger" aria-label="Menu">
+    <span></span><span></span><span></span>
+  </button>
+</nav>
+
+<!-- Mobile Menu -->
+<div class="mobile-menu" id="mobileMenu">
+  <a href="#services">Services</a>
+  <a href="#stack">Stack</a>
+  <a href="#hiring">Hiring</a>
+  <a href="#about">About</a>
+  <a href="#contact">Contact</a>
+</div>
+
+<!-- ── HERO ── -->
+<section id="home">
+  <div class="hero-grid-bg"></div>
+  <div class="hero-glow"></div>
+  <div class="hero-glow2"></div>
+  <div class="hero-content">
+    <div class="hero-badge">Est. 2025 · Helsinki, Finland</div>
+    <h1>We shift<br>developers <em>forward</em></h1>
+    <p class="hero-sub">DevShift Solutions connects talented developers with the opportunities they deserve. We bridge the gap between ambition and employment in today's competitive tech landscape.</p>
+    <div class="hero-actions">
+      <a href="#contact" class="btn-primary">Work with us</a>
+      <a href="#services" class="btn-secondary">What we do →</a>
+    </div>
+  </div>
+</section>
+
+<!-- ── STATS ── -->
+<div class="stats-bar">
+  <div class="stat">
+    <div class="stat-num">13<span>+</span></div>
+    <div class="stat-label">Team Members</div>
+  </div>
+  <div class="stat">
+    <div class="stat-num">5</div>
+    <div class="stat-label">Active Clients</div>
+  </div>
+  <div class="stat">
+    <div class="stat-num">2</div>
+    <div class="stat-label">Hiring Regions</div>
+  </div>
+  <div class="stat">
+    <div class="stat-num">8<span>+</span></div>
+    <div class="stat-label">Tech Stacks</div>
+  </div>
+</div>
+
+<!-- ── SERVICES ── -->
+<section id="services" class="section">
+  <div class="reveal">
+    <div class="section-label">What we do</div>
+    <h2>Built for developers,<br>by developers</h2>
+  </div>
+  <div class="services-grid reveal">
+    <div class="service-card">
+      <div class="service-icon">⚡</div>
+      <h3>Job Placement</h3>
+      <p>We match skilled developers with companies that align with their expertise, ambitions, and values — cutting through the noise of job searching.</p>
+    </div>
+    <div class="service-card">
+      <div class="service-icon">🔍</div>
+      <h3>Talent Sourcing</h3>
+      <p>Our network spans Europe and the US. We source pre-vetted, high-caliber tech talent that fits your team's culture and technical requirements.</p>
+    </div>
+    <div class="service-card">
+      <div class="service-icon">🛠</div>
+      <h3>Technical Consulting</h3>
+      <p>Beyond placement, we advise on team structures, hiring strategies, and tech stacks — helping companies build engineering teams that last.</p>
+    </div>
+    <div class="service-card">
+      <div class="service-icon">📈</div>
+      <h3>Career Development</h3>
+      <p>We invest in developer growth with resume coaching, technical interview prep, and career pathway guidance tailored to each individual.</p>
+    </div>
+    <div class="service-card">
+      <div class="service-icon">🤝</div>
+      <h3>Contract & Full-Time</h3>
+      <p>Whether you need a contract engineer for a sprint or a permanent hire, we have the pipeline to deliver — quickly and with confidence.</p>
+    </div>
+    <div class="service-card">
+      <div class="service-icon">🌐</div>
+      <h3>Remote-First Matching</h3>
+      <p>We specialize in remote and hybrid placements, connecting distributed companies with top-tier developers across time zones.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ── STACK ── -->
+<section id="stack">
+  <div class="reveal">
+    <div class="section-label">Technology</div>
+    <h2>Our technical expertise</h2>
+    <p class="stack-sub">We speak the same language as the engineers we place. Our team is fluent across the modern software stack.</p>
+  </div>
+  <div class="stack-grid reveal">
+    <div class="stack-tag">Node.js</div>
+    <div class="stack-tag">React</div>
+    <div class="stack-tag">TypeScript</div>
+    <div class="stack-tag">JavaScript</div>
+    <div class="stack-tag">Python</div>
+    <div class="stack-tag">Java</div>
+    <div class="stack-tag">.NET</div>
+    <div class="stack-tag">C#</div>
+  </div>
+</section>
+
+<!-- ── HIRING ── -->
+<section id="hiring" class="section">
+  <div class="reveal">
+    <div class="section-label">Hiring regions</div>
+    <h2>Europe & US only</h2>
+  </div>
+  <div class="hiring-grid">
+    <div class="hiring-text reveal">
+      <p>We maintain a focused hiring footprint — sourcing exclusively from Europe and the United States. This means deeper networks, stronger compliance, and better cultural alignment for your team.</p>
+      <p>Our quality-over-quantity approach ensures every candidate we present has been thoroughly screened and is ready to contribute from day one.</p>
+      <a href="#contact" class="btn-primary" style="display:inline-block; margin-top:0.5rem">Start hiring →</a>
+    </div>
+    <div class="region-cards reveal">
+      <div class="region-card">
+        <div class="region-flag">🇪🇺</div>
+        <div>
+          <h4>Europe</h4>
+          <p>Finland-based HQ. Deep network across Northern, Western & Eastern Europe including the Nordics, DACH region, and beyond.</p>
+        </div>
+      </div>
+      <div class="region-card">
+        <div class="region-flag">🇺🇸</div>
+        <div>
+          <h4>United States</h4>
+          <p>Active sourcing across major US tech hubs — covering both East and West Coast talent pools.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── ABOUT ── -->
+<section id="about">
+  <div class="reveal">
+    <div class="section-label">About us</div>
+    <h2>A new kind of IT services firm</h2>
+  </div>
+  <div class="about-grid">
+    <div class="about-text reveal">
+      <p>DevShift Solutions was founded in September 2025 with a clear mission: make it easier for talented developers to find meaningful work, and for forward-thinking companies to build the teams they need.</p>
+      <p>We're a small, focused team of 13 — and we think that's a strength. Every client relationship is handled with direct attention, fast response, and genuine care for outcomes. No account managers, no bureaucracy.</p>
+      <p>Based in Finland, we bring a Nordic sense of transparency, trust, and quality to everything we do.</p>
+    </div>
+    <div class="reveal">
+      <div class="meta-list">
+        <div class="meta-item"><span class="key">Founded</span><span class="val">September 20, 2025</span></div>
+        <div class="meta-item"><span class="key">Headquarters</span><span class="val">Finland</span></div>
+        <div class="meta-item"><span class="key">Domain</span><span class="val">devshiftsol.com</span></div>
+        <div class="meta-item"><span class="key">Industry</span><span class="val">IT Services</span></div>
+        <div class="meta-item"><span class="key">Team size</span><span class="val">13 employees</span></div>
+        <div class="meta-item"><span class="key">Active clients</span><span class="val">5</span></div>
+        <div class="meta-item"><span class="key">Hiring from</span><span class="val">Europe & United States</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── CONTACT ── -->
+<section id="contact">
+  <div class="reveal">
+    <div class="section-label">Get in touch</div>
+    <h2>Ready to shift forward?</h2>
+    <p>Whether you're a developer seeking your next role or a company building a technical team,<br>we'd love to hear from you.</p>
+    <a href="mailto:hello@devshiftsol.com" class="contact-email">
+      ✉&nbsp; hello@devshiftsol.com
+    </a>
+  </div>
+</section>
+
+<!-- ── FOOTER ── -->
+<footer>
+  <a class="logo" href="#home" style="text-decoration:none">Dev<span>Shift</span> Solutions</a>
+  <p>© 2025 DevShift Solutions. Founded in Finland.</p>
+  <p>devshiftsol.com &nbsp;·&nbsp; Helsinki, Europe & US</p>
+</footer>
+
+<script>
+  // Scroll reveal
+  const reveals = document.querySelectorAll('.reveal');
+  const revealObserver = new IntersectionObserver((entries) => {
+    entries.forEach((entry, i) => {
+      if (entry.isIntersecting) {
+        setTimeout(() => entry.target.classList.add('visible'), i * 80);
+        revealObserver.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.08 });
+  reveals.forEach(el => revealObserver.observe(el));
+
+  // Hamburger menu
+  const hamburger = document.getElementById('hamburger');
+  const mobileMenu = document.getElementById('mobileMenu');
+
+  hamburger.addEventListener('click', () => {
+    hamburger.classList.toggle('open');
+    mobileMenu.classList.toggle('open');
+  });
+
+  // Close mobile menu on link click
+  mobileMenu.querySelectorAll('a').forEach(link => {
+    link.addEventListener('click', () => {
+      hamburger.classList.remove('open');
+      mobileMenu.classList.remove('open');
+    });
+  });
+
+  // Active nav highlight on scroll
+  const sections = document.querySelectorAll('section[id], div.stats-bar');
+  const navLinks = document.querySelectorAll('.nav-links li a');
+
+  window.addEventListener('scroll', () => {
+    let current = '';
+    sections.forEach(sec => {
+      if (window.scrollY >= sec.offsetTop - 100) current = sec.id;
+    });
+    navLinks.forEach(link => {
+      link.style.color = '';
+      if (link.getAttribute('href') === '#' + current) {
+        if (!link.classList.contains('nav-cta')) link.style.color = '#fff';
+      }
+    });
+  });
+</script>
+</body>
+</html>
